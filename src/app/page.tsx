@@ -7,7 +7,16 @@ import { NftProps } from "@/components/Nft/nft.model";
 import { useWeb3 } from "@/hooks/useWeb3";
 
 export default function Home() {
-  const { provider } = useWeb3();
+  const { provider, contract } = useWeb3();
+
+  const getNftInfo = async () => {
+    console.log(await contract!.name());
+    console.log(await contract!.symbol());
+  };
+
+  if (contract) {
+    getNftInfo();
+  }
 
   const getAccounts = async () => {
     const accounts = await provider!.listAccounts();
