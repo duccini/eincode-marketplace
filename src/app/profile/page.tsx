@@ -2,7 +2,7 @@
 "use client";
 
 import nfts from "../../../data/meta.json";
-import { NftProps } from "@/components/Nft/nft.model";
+import { NftProps } from "@/types/nft";
 
 const tabs = [{ name: "Your Collection", href: "#", current: true }];
 

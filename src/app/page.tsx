@@ -3,29 +3,11 @@
 import NftList from "@/components/Nft/List";
 
 import nfts from "../../data/meta.json";
-import { NftProps } from "@/components/Nft/nft.model";
-import { useWeb3 } from "@/hooks/useWeb3";
+import { NftProps } from "@/types/nft";
+// import { useWeb3 } from "@/hooks/useWeb3";
 
 export default function Home() {
-  const { provider, contract } = useWeb3();
-
-  const getNftInfo = async () => {
-    console.log(await contract!.name());
-    console.log(await contract!.symbol());
-  };
-
-  if (contract) {
-    getNftInfo();
-  }
-
-  const getAccounts = async () => {
-    const accounts = await provider!.listAccounts();
-    console.log(accounts[0]);
-  };
-
-  if (provider) {
-    getAccounts();
-  }
+  // const { provider, contract } = useWeb3();
 
   return (
     <div className="relative bg-gray-100 pt-16 pb-20 px-4 sm:px-6 lg:pt-12 lg:pb-12 lg:px-8">

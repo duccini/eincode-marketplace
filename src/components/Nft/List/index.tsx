@@ -1,5 +1,5 @@
 import NftItem from "../Item";
-import { NftsListProps } from "../nft.model";
+import { NftsListProps } from "../../../types/nft";
 
 const NftList = ({ nfts }: NftsListProps) => {
   return (

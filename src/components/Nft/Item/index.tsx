@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { NftProps } from "../nft.model";
+import { NftProps } from "../../../types/nft";
 
 type NftItemProps = {
   item: NftProps;
