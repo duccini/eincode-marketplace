@@ -1,3 +1,5 @@
+import { setupHooks, Web3Hooks } from "@/hooks/setup";
+import { Web3Dependencies } from "@/types/hooks";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract, ethers, providers } from "ethers";
 
@@ -8,24 +10,41 @@ declare global {
   }
 }
 
-// Definição dos tipos Web3Params e Web3State
-export type Web3Params = {
-  ethereum: MetaMaskInpageProvider | null;
-  provider: providers.Web3Provider | null;
-  contract: Contract | null;
+// Nullable type in TypeScript
+type Nullable<T> = {
+  [P in keyof T]: T[P] | null;
 };
 
+// Definição dos tipos Web3Params e Web3State
 export type Web3State = {
   isLoading: boolean;
-} & Web3Params;
+  hooks: Web3Hooks;
+} & Nullable<Web3Dependencies>;
 
-// Função que retorna o estado padrão
-export const createDefaultState = (): Web3State => {
+// Function that creates the default state
+export const createDefaultState = () => {
   return {
     ethereum: null,
     provider: null,
     contract: null,
     isLoading: true,
+    hooks: setupHooks({} as any),
+  };
+};
+
+// Function tha creates the State
+export const createWeb3State = ({
+  ethereum,
+  provider,
+  contract,
+  isLoading,
+}: Web3Dependencies & { isLoading: boolean }) => {
+  return {
+    ethereum,
+    provider,
+    contract,
+    isLoading,
+    hooks: setupHooks({ ethereum, provider, contract }),
   };
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { useAccount } from "@/hooks/useAccount";
+import { useAccount } from "@/hooks";
+
 import {
   Disclosure,
   DisclosureButton,
@@ -17,8 +18,8 @@ import { usePathname } from "next/navigation";
 export default function NavBar() {
   const pathname = usePathname();
 
-  const { data } = useAccount("Some params");
-  console.log(data);
+  const { account } = useAccount();
+  console.log(account.data);
 
   const navigation = [
     { name: "Marktplace", href: "/", current: pathname === "/" ? true : false },
