@@ -6,19 +6,20 @@ export type Web3Dependencies = {
   provider: providers.Web3Provider;
   contract: Contract;
   ethereum: MetaMaskInpageProvider;
+  isLoading: boolean;
 };
 
 // Why <T> is D (deps) and not P (params)?
-export type CryptoSWRResponse<D = any> = SWRResponse<D>;
+export type CryptoSWRResponse<D = any, R = any> = SWRResponse<D> & R;
 
 /**
  *  CryptoSWRHook recebe D from hookFactory, P is the params defined in the func.
  *
  *  <D = any, P = any> Generic types for making hook reuseble
  */
-export type CryptoSWRHook<D = any, P = any> = (
-  params: P
-) => CryptoSWRResponse<D>;
+export type CryptoSWRHook<D = any, R = any, P = any> = (
+  params?: P
+) => CryptoSWRResponse<D, R>;
 
 /**
  *  Partial<T> é um utilitário TS que transforma todos os campos de um tipo
@@ -29,6 +30,6 @@ export type CryptoSWRHook<D = any, P = any> = (
  *
  *  CryptoSWRHook is the type that hookFactory returns
  */
-export type CryptoHookFactory<D = any, P = any> = {
-  (d: Partial<Web3Dependencies>): CryptoSWRHook<D, P>;
+export type CryptoHookFactory<D = any, R = any, P = any> = {
+  (d: Partial<Web3Dependencies>): CryptoSWRHook<D, R, P>;
 };
