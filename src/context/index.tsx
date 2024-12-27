@@ -8,7 +8,29 @@ import {
   Web3State,
 } from "./utils";
 import { ethers } from "ethers";
-import { setupHooks } from "@/hooks/setup";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+
+const pageReload = () => {
+  window.location.reload();
+};
+
+const handleAccountsChange = (ethereum: MetaMaskInpageProvider) => async () => {
+  const isLocked = !(await ethereum._metamask.isUnlocked());
+  if (isLocked) {
+    pageReload();
+  }
+};
+
+const setGlobalListeners = (ethereum: MetaMaskInpageProvider) => {
+  ethereum.on("chainChanged", pageReload);
+  ethereum.on("accountsChanged", handleAccountsChange(ethereum));
+};
+
+// ethereum is undefined when the browser doesn't have Metamask
+const removeGlobalListeners = (ethereum: MetaMaskInpageProvider) => {
+  ethereum?.removeListener("chainChanged", pageReload);
+  ethereum?.removeListener("accountsChanged", handleAccountsChange);
+};
 
 // Criando o Contexto
 export const Web3Context = createContext<Web3State>(createDefaultState());
@@ -31,6 +53,9 @@ const Web3Provider = ({ children }: Web3ProviderProps) => {
 
         const contract = await loadContract("NftMarket", provider);
 
+        // Registering event listener
+        setGlobalListeners(window.ethereum);
+
         setWeb3Api(
           createWeb3State({
             ethereum: window.ethereum,
@@ -40,7 +65,7 @@ const Web3Provider = ({ children }: Web3ProviderProps) => {
           })
         );
       } catch (error: any) {
-        console.error("Please, install a web3 wallet");
+        console.log("Please, install a web3 wallet");
         setWeb3Api((prevState) =>
           createWeb3State({
             ...(prevState as any),
@@ -51,6 +76,9 @@ const Web3Provider = ({ children }: Web3ProviderProps) => {
     }
 
     initWeb3();
+
+    // Remove event listener
+    return () => removeGlobalListeners(window.ethereum);
   }, []);
 
   return (

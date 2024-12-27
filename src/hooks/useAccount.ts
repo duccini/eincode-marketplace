@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 type UseAccountResponse = {
   connect: () => void;
-  isLoading: boolean;
+  isLoading: boolean | undefined;
   isInstalled: boolean;
 };
 
@@ -51,6 +51,7 @@ export const hookFactory: AccountHookFactory =
       },
       {
         revalidateOnFocus: false,
+        shouldRetryOnError: false,
       }
     );
 
@@ -85,14 +86,8 @@ export const hookFactory: AccountHookFactory =
       mutate,
       isValidating,
       connect,
-      isLoading: isLoading || isValidating,
+      isLoading: isLoading,
       isInstalled: ethereum?.isMetaMask || false,
       ...rest,
     };
   };
-
-// Hook
-export const useAccount = hookFactory({
-  ethereum: undefined,
-  provider: undefined,
-});

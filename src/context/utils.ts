@@ -48,7 +48,7 @@ export const createWeb3State = ({
   };
 };
 
-const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
+const NETWORK_ID = process.env.NEXT_PUBLIC_CONTRACT_NETWORK_DEPLOY_ID;
 
 export const loadContract = async (
   name: string,

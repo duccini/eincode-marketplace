@@ -16,8 +16,8 @@ const WalletBar = ({
   account,
   connect,
 }: WalletBarProps) => {
-  console.log("isLoading: ", isLoading);
-  console.log("isInstalled: ", isInstalled);
+  // console.log("isLoading: ", isLoading);
+  // console.log("isInstalled: ", isInstalled);
 
   if (isLoading) {
     return (
