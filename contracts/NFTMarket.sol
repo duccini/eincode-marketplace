@@ -25,6 +25,13 @@ contract NftMarket is ERC721URIStorage {
   mapping(uint => NftItem) private _idToNftItem;
 
   /*
+   *  Important to iterate the array and for deleting an item in the array
+   *  _idToNftIndex tokenId => index in the array
+   */
+  uint[] private _allNfts;
+  mapping(uint => uint) private _idToNftIndex;
+
+  /*
    *  Events you can emit from your functions and listener from your Front-End
    *  
    *  The last argument/propertie cannot ended with `,`
@@ -48,6 +55,35 @@ contract NftMarket is ERC721URIStorage {
 
   function tokenURIExists(string memory tokenURI) public view returns (bool) {
     return _usedTokenURIs[tokenURI] == true;
+  }
+
+  function totalSupply() public view returns (uint) {
+    return _allNfts.length;
+  }
+
+  function tokenByIndex(uint index) public view returns (uint) {
+    require(index < totalSupply(), "Index out of bounds.");
+
+    return _allNfts[index];
+  }
+
+  function getAllNftsOnSale() public view returns (NftItem[] memory) {
+    uint allItemsCounts = totalSupply();
+    uint currentIndex = 0;
+
+    NftItem[] memory items = new NftItem[](_listedItems.current());
+
+    for (uint i = 0; i < allItemsCounts; i++) {
+      uint tokenId = tokenByIndex(i);
+      NftItem storage item = _idToNftItem[tokenId];
+
+      if (item.isListed == true) {
+        items[currentIndex] = item;
+        currentIndex += 1;
+      }
+    }
+
+    return items;
   }
 
   /**
@@ -104,5 +140,31 @@ contract NftMarket is ERC721URIStorage {
     _idToNftItem[tokenId] = NftItem(tokenId, price, msg.sender, true);
 
     emit NftItemCreated(tokenId, price, msg.sender, true);
+  }
+
+  /*
+   *  This function is called in ERC721 by _safeMint(msg.sender, tokenId)
+   *  
+   *  internal: use only in this contract
+   *  virtual: ??
+   *  override: supersede the existing _beforeTokenTransfer
+   */
+  function _beforeTokenTransfer(
+      address from, 
+      address to, 
+      uint tokenId,
+      uint256 batchSize) internal virtual override {
+    super._beforeTokenTransfer(from, to, tokenId, batchSize);
+
+    // minting token
+    if (from == address(0)) {
+      _addTokenToAllTokensEnumaration(tokenId);
+    }
+  }
+
+  // Register the mapping tokenId => array index
+  function _addTokenToAllTokensEnumaration(uint tokenId) private {
+    _idToNftIndex[tokenId] = _allNfts.length;
+    _allNfts.push(tokenId);
   }
 }
