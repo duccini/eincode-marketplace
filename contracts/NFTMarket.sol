@@ -51,6 +51,11 @@ contract NftMarket is ERC721URIStorage {
 
   constructor() ERC721("CreaturesNFT", "CNFT") {}
 
+  // Temporary functions
+  function burnToken(uint tokenId) public {
+    _burn(tokenId);
+  }
+
   function getNftItem(uint tokenId) public view returns(NftItem memory) {
     return _idToNftItem[tokenId];
   }
@@ -184,12 +189,14 @@ contract NftMarket is ERC721URIStorage {
     if (from == address(0)) {
       // minting token, to == 0x00
       _addTokenToAllTokensEnumeration(tokenId);
-    } else if (to != from) {
+    } else if (from != to) {
       // handling the case when NFT is transfer, removing token to one owner
       _removeTokenFromOwnerEnumeration(from, tokenId);
     }
 
-    if (to != from) {
+    if(to == address(0)) {
+      _removeTokenFromAllTokensEnumeration(tokenId);
+    } else if (to != from) {
       // minting token, to == 0x00, adding token to another owner
       _addTokenToOwnerEnumeration(to, tokenId);
     }
@@ -243,5 +250,20 @@ contract NftMarket is ERC721URIStorage {
 
     delete _idToOwnedIndex[tokenId];
     delete _ownedTokens[from][lastTokenIndex];
+  }
+
+  // Burn Token
+  // This not delete token from owners mappings !!!
+  function _removeTokenFromAllTokensEnumeration(uint tokenId) private {
+    uint lastTokenIndex = _allNfts.length - 1;
+    uint tokenIndex = _idToNftIndex[tokenId];
+    uint lastTokenId = _allNfts[lastTokenIndex];
+
+    // Remapping tokens
+    _allNfts[tokenIndex] = lastTokenId;
+    _idToNftIndex[lastTokenId] = tokenIndex;
+
+    delete _idToNftIndex[tokenId];
+    _allNfts.pop();
   }
 }
