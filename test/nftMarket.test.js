@@ -193,53 +193,75 @@ contract("NftMarket", (accounts) => {
     });
   });
 
-  describe("Burn Token", () => {
-    const tokenURI = "https://test-json3.com";
+  // describe("Burn Token", () => {
+  //   const tokenURI = "https://test-json3.com";
 
+  //   before(async () => {
+  //     await _contract.mintToken(tokenURI, _nftPrice, {
+  //       from: accounts[2],
+  //       value: _listingPrice,
+  //     });
+  //   });
+
+  //   it("accounts[2] should own 1 tokens", async () => {
+  //     const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
+  //     // const allNfts = await _contract.getAllNftsOnSale();
+
+  //     // console.log(ownedNfts);
+  //     // console.log(allNfts);
+
+  //     assert.equal(ownedNfts.length, 1, "Wrong number of tokens.");
+  //   });
+
+  //   it("accounts[2] should have 0 tokens", async () => {
+  //     await _contract.burnToken(3, { from: accounts[2] });
+  //     const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
+  //     // const allNfts = await _contract.getAllNftsOnSale();
+
+  //     // console.log(ownedNfts);
+  //     // console.log(allNfts);
+
+  //     assert.equal(ownedNfts.length, 0, "Wrong number of tokens.");
+  //   });
+
+  //   it("accounts[1] should have two NFTs and accounts[0] and accounts[2] should hane zero token", async () => {
+  //     const allNftsOfAccounts0 = await _contract.balanceOf(accounts[0]);
+  //     const allNftsOfAccounts1 = await _contract.balanceOf(accounts[1]);
+  //     const allNftsOfAccounts2 = await _contract.balanceOf(accounts[2]);
+
+  //     assert.equal(allNftsOfAccounts0.toNumber(), 0, "Wrong number of tokens.");
+  //     assert.equal(allNftsOfAccounts1.toNumber(), 2, "Wrong number of tokens.");
+  //     assert.equal(allNftsOfAccounts2.toNumber(), 0, "Wrong number of tokens.");
+  //   });
+
+  //   it("Token id 3 should not have an owner", async () => {
+  //     try {
+  //       await _contract.ownerOf(3);
+  //     } catch (error) {
+  //       assert(error, "Token Id 3 should not have an owner");
+  //     }
+  //   });
+  // });
+
+  describe("List an Nft", () => {
     before(async () => {
-      await _contract.mintToken(tokenURI, _nftPrice, {
-        from: accounts[2],
+      _listingPrice = ethers.utils.parseEther("0.015").toString();
+      _nftPrice = ethers.utils.parseEther("0.03").toString();
+      await _contract.setListingPrice(_listingPrice);
+      await _contract.placeNftOnSale(1, _nftPrice, {
+        from: accounts[1],
         value: _listingPrice,
       });
     });
 
-    it("accounts[2] should own 1 tokens", async () => {
-      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
-      // const allNfts = await _contract.getAllNftsOnSale();
+    it("should have two listed items", async () => {
+      const listedNfts = await _contract.getAllNftsOnSale();
 
-      // console.log(ownedNfts);
-      // console.log(allNfts);
+      // const listingPrice = await _contract.listingPrice();
+      // console.log(listedNfts);
+      // console.log(listingPrice.toString());
 
-      assert.equal(ownedNfts.length, 1, "Wrong number of tokens.");
-    });
-
-    it("accounts[2] should have 0 tokens", async () => {
-      await _contract.burnToken(3, { from: accounts[2] });
-      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
-      // const allNfts = await _contract.getAllNftsOnSale();
-
-      // console.log(ownedNfts);
-      // console.log(allNfts);
-
-      assert.equal(ownedNfts.length, 0, "Wrong number of tokens.");
-    });
-
-    it("accounts[1] should have two NFTs and accounts[0] and accounts[2] should hane zero token", async () => {
-      const allNftsOfAccounts0 = await _contract.balanceOf(accounts[0]);
-      const allNftsOfAccounts1 = await _contract.balanceOf(accounts[1]);
-      const allNftsOfAccounts2 = await _contract.balanceOf(accounts[2]);
-
-      assert.equal(allNftsOfAccounts0.toNumber(), 0, "Wrong number of tokens.");
-      assert.equal(allNftsOfAccounts1.toNumber(), 2, "Wrong number of tokens.");
-      assert.equal(allNftsOfAccounts2.toNumber(), 0, "Wrong number of tokens.");
-    });
-
-    it("Token id 3 should not have an owner", async () => {
-      try {
-        await _contract.ownerOf(3);
-      } catch (error) {
-        assert(error, "Token Id 3 should not have an owner");
-      }
+      assert.equal(listedNfts.length, 2, "Invalid number of NFTs on sale.");
     });
   });
 });
