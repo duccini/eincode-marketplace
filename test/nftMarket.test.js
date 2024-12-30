@@ -148,5 +148,48 @@ contract("NftMarket", (accounts) => {
 
       assert.equal(allNfts[0].tokenId, 2, "NFT has a wrong id.");
     });
+
+    /**
+     *  account[0] mints NFT 1 and 2
+     *  account[1] buy NFT 1 from account[0]
+     *  account[0] stays with NFT 2 and account[1] stays with NFT 1
+     */
+    it("account 0 shoul have owned one NFT", async () => {
+      // By default all call to the contract is made by account[0]
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[0] });
+
+      // console.log(`accounts[0]: ${accounts[0]}`);
+      // console.log(ownedNfts);
+
+      assert.equal(ownedNfts[0].tokenId, 2, "NFT has a wrong id.");
+    });
+
+    it("account 1 shoul have owned one NFT", async () => {
+      // By default all call to the contract is made by account[0]
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[1] });
+
+      // console.log(`accounts[1]: ${accounts[1]}`);
+      // console.log(ownedNfts);
+
+      assert.equal(ownedNfts[0].tokenId, 1, "NFT has a wrong id.");
+    });
+  });
+
+  describe("Token transfer to new owner", () => {
+    // ERC721 transferFrom -> _transfer -> _beforeTokenTransfer
+    before(async () => {
+      // from, to, tokenId
+      await _contract.transferFrom(accounts[0], accounts[1], 2);
+    });
+
+    it("accounts[0] should own 0 tokens", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[0] });
+      assert.equal(ownedNfts.length, 0, "Wrong number of tokens.");
+    });
+
+    it("accounts[1] should own 2 tokens", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[1] });
+      assert.equal(ownedNfts.length, 2, "Wrong number of tokens.");
+    });
   });
 });
