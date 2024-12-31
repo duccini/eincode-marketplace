@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { NftProps } from "../../../types/nft";
+import { Nft } from "../../../types/nft";
 
 type NftItemProps = {
-  item: NftProps;
+  item: Nft;
 };
 
 const NftItem = ({ item }: NftItemProps) => {
@@ -12,7 +12,7 @@ const NftItem = ({ item }: NftItemProps) => {
       <div className="flex-shrink-0">
         <img
           className={`h-full w-full object-cover`}
-          src={item.image}
+          src={item.meta.image}
           alt="New NFT"
         />
       </div>
@@ -20,9 +20,11 @@ const NftItem = ({ item }: NftItemProps) => {
         <div className="flex-1">
           <p className="text-sm font-medium text-indigo-600">Creatures NFT</p>
           <div className="block mt-2">
-            <p className="text-xl font-semibold text-gray-900">{item.name}</p>
+            <p className="text-xl font-semibold text-gray-900">
+              {item.meta.name}
+            </p>
             <p className="mt-3 mb-3 text-base text-gray-500">
-              {item.description}
+              {item.meta.description}
             </p>
           </div>
         </div>
@@ -34,7 +36,7 @@ const NftItem = ({ item }: NftItemProps) => {
               </dt>
               <dd className="order-1 text-xl font-extrabold text-indigo-600">
                 <div className="flex justify-center items-center">
-                  100
+                  {item.price}
                   <img
                     className="h-6"
                     src="/images/small-eth.webp"
@@ -44,7 +46,7 @@ const NftItem = ({ item }: NftItemProps) => {
               </dd>
             </div>
 
-            {item.attributes.map((attribute) => (
+            {item.meta.attributes.map((attribute) => (
               <div
                 key={attribute.trait_type}
                 className="flex flex-col px-4 pt-4"

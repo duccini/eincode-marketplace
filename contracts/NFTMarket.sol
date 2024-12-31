@@ -59,9 +59,9 @@ contract NftMarket is ERC721URIStorage, Ownable {
   }
 
   // Temporary functions
-  // function burnToken(uint tokenId) public {
-  //   _burn(tokenId);
-  // }
+  function burnToken(uint tokenId) public {
+    _burn(tokenId);
+  }
 
   function getNftItem(uint tokenId) public view returns(NftItem memory) {
     return _idToNftItem[tokenId];

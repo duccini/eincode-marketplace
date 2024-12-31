@@ -5,6 +5,7 @@ import NftList from "@/components/Nft/List";
 // import nfts from "../../data/meta.json";
 // import { NftProps } from "@/types/nft";
 import { useListedNfts } from "@/hooks";
+import { Nft } from "@/types/nft";
 
 export default function Home() {
   const { nfts } = useListedNfts();
@@ -25,7 +26,7 @@ export default function Home() {
           </p>
         </div>
 
-        <NftList nfts={nfts?.data} />
+        <NftList nfts={nfts.data as Nft[]} />
       </div>
     </div>
   );

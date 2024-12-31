@@ -7,7 +7,7 @@ instance.mintToken(
 );
 
 instance.mintToken(
-  "https://scarlet-fancy-duck-326.mypinata.cloud/ipfs/bafkreiaxocjokydq6qrlmw7svdo4znj57j3ih5zbpmbvdbewpoxrgzj3ca",
+  "https://scarlet-fancy-duck-326.mypinata.cloud/ipfs/bafkreiaojykdzfltl3ztbmzpn6v7q3yxj6dfyo55dgnrxsl4nqfxrqitxe",
   "30000000000000000",
   { value: "25000000000000000", from: accounts[0] }
 );

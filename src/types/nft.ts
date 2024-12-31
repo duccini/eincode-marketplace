@@ -11,5 +11,16 @@ export type NftProps = {
 };
 
 export interface NftsListProps {
-  nfts: NftProps[];
+  nfts: Nft[];
 }
+
+export type NftCore = {
+  tokenId: number;
+  price: number;
+  creator: string;
+  isListed: boolean;
+};
+
+export type Nft = {
+  meta: NftProps;
+} & NftCore;
