@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import nfts from "../../../data/meta.json";
-import { NftProps } from "@/types/nft";
+import { useOwnedNfts } from "@/hooks";
+// import nfts from "../../../data/meta.json";
+import { Nft } from "@/types/nft";
+import { useEffect, useState } from "react";
 
 const tabs = [{ name: "Your Collection", href: "#", current: true }];
 
@@ -11,6 +13,17 @@ function classNames(...classes: string[]) {
 }
 
 export default function Profile() {
+  const { nfts } = useOwnedNfts();
+  const [activeNft, setActiveNft] = useState<Nft>();
+
+  useEffect(() => {
+    if (nfts.data && nfts.data.length > 0) {
+      setActiveNft(nfts.data[nfts.data.length - 1]);
+    }
+
+    return () => setActiveNft(undefined);
+  }, [nfts.data]);
+
   return (
     <div className="h-full flex">
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -54,21 +67,27 @@ export default function Profile() {
                   role="list"
                   className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
                 >
-                  {(nfts as NftProps[]).map((nft) => (
-                    <li key={nft.name} onClick={() => {}} className="relative">
+                  {(nfts.data as Nft[]).map((nft) => (
+                    <li
+                      key={nft.tokenId}
+                      onClick={() => setActiveNft(nft)}
+                      className="relative"
+                    >
                       <div
                         className={classNames(
-                          true
+                          nft.tokenId === activeNft?.tokenId
                             ? "ring-2 ring-offset-2 ring-indigo-500"
                             : "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500",
                           "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden"
                         )}
                       >
                         <img
-                          src={nft.image}
+                          src={nft.meta.image}
                           alt=""
                           className={classNames(
-                            true ? "" : "group-hover:opacity-75",
+                            nft.tokenId === activeNft?.tokenId
+                              ? ""
+                              : "group-hover:opacity-75",
                             "object-cover pointer-events-none"
                           )}
                         />
@@ -77,12 +96,12 @@ export default function Profile() {
                           className="absolute inset-0 focus:outline-none"
                         >
                           <span className="sr-only">
-                            View details for {nft.name}
+                            View details for {nft.meta.name}
                           </span>
                         </button>
                       </div>
                       <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">
-                        {nft.name}
+                        {nft.meta.name}
                       </p>
                     </li>
                   ))}
@@ -93,20 +112,24 @@ export default function Profile() {
 
           {/* Details sidebar */}
           <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
-            {true && (
+            {activeNft && (
               <div className="pb-16 space-y-6">
                 <div>
                   <div className="block w-full aspect-w-10 aspect-h-7 rounded-lg overflow-hidden">
-                    <img src={nfts[1].image} alt="" className="object-cover" />
+                    <img
+                      src={activeNft.meta.image}
+                      alt=""
+                      className="object-cover"
+                    />
                   </div>
                   <div className="mt-4 flex items-start justify-between">
                     <div>
                       <h2 className="text-lg font-medium text-gray-900">
                         <span className="sr-only">Details for </span>
-                        {nfts[1].name}
+                        {activeNft.meta.name}
                       </h2>
                       <p className="text-sm font-medium text-gray-500">
-                        {nfts[1].description}
+                        {activeNft.meta.description}
                       </p>
                     </div>
                   </div>
@@ -114,7 +137,7 @@ export default function Profile() {
                 <div>
                   <h3 className="font-medium text-gray-900">Information</h3>
                   <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                    {nfts[0].attributes.map((attr) => (
+                    {activeNft.meta.attributes.map((attr) => (
                       <div
                         key={attr.trait_type}
                         className="py-3 flex justify-between text-sm font-medium"
