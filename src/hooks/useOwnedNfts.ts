@@ -1,9 +1,12 @@
 import { CryptoHookFactory } from "@/types/hooks";
 import { Nft } from "@/types/nft";
 import { ethers } from "ethers";
+import { useCallback } from "react";
 import useSWR from "swr";
 
-type UseOwnedNftsResponse = {};
+type UseOwnedNftsResponse = {
+  listNft: (tokenId: number, price: number) => Promise<void>;
+};
 type OwnedNftsHookFactory = CryptoHookFactory<Nft[], UseOwnedNftsResponse>;
 
 export type UseOwnedNftsHook = ReturnType<OwnedNftsHookFactory>;
@@ -35,8 +38,36 @@ export const hookFactory: OwnedNftsHookFactory =
         return nfts;
       }
     );
+
+    /**
+     * This function harcoded listingPrice what is not good
+     * Smart Contract needs contain a function to return the listingPrice
+     */
+    const _contract = contract;
+    const listNft = useCallback(
+      async (tokenId: number, price: number) => {
+        try {
+          const result = await _contract!.placeNftOnSale(
+            tokenId,
+            ethers.utils.parseEther(price.toString()),
+            {
+              value: ethers.utils.parseEther((0.025).toString()),
+            }
+          );
+
+          await result?.wait();
+
+          alert("Item has been listed!");
+        } catch (e: any) {
+          console.error(e.message);
+        }
+      },
+      [_contract]
+    );
+
     return {
       ...swr,
+      listNft,
       data: data || [],
     };
   };

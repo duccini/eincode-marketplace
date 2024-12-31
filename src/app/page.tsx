@@ -1,16 +1,6 @@
-"use client";
-
 import NftList from "@/components/Nft/List";
 
-// import nfts from "../../data/meta.json";
-// import { NftProps } from "@/types/nft";
-import { useListedNfts } from "@/hooks";
-import { Nft } from "@/types/nft";
-
 export default function Home() {
-  const { nfts } = useListedNfts();
-  console.log(nfts.data);
-
   return (
     <div className="relative bg-gray-100 pt-16 pb-20 px-4 sm:px-6 lg:pt-12 lg:pb-12 lg:px-8">
       <div className="absolute inset-0">
@@ -26,7 +16,7 @@ export default function Home() {
           </p>
         </div>
 
-        <NftList nfts={nfts.data as Nft[]} />
+        <NftList />
       </div>
     </div>
   );
